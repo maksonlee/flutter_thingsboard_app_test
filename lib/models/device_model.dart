@@ -68,6 +68,5 @@ class DeviceModel with ChangeNotifier {
         }
       }
     });
-    subscription.subscribe();
   }
 }

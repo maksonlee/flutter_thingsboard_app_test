@@ -11,27 +11,52 @@ class DeviceDetail extends StatefulWidget {
   State<DeviceDetail> createState() => _DeviceDetailState();
 }
 
-class _DeviceDetailState extends State<DeviceDetail> {
+class _DeviceDetailState extends State<DeviceDetail> with WidgetsBindingObserver {
+  late DeviceModel device;
   late TelemetrySubscriber subscription;
+  bool isSubscribed = false;
 
   @override
   void initState() {
     super.initState();
-    final device = Provider.of<DeviceModel>(context, listen: false);
-    device.subscribe();
-    subscription = device.subscription;
-  }
-
-  @override
-  void deactivate() {
-    subscription.unsubscribe();
-    super.deactivate();
+    device = Provider.of<DeviceModel>(context, listen: false);
+    WidgetsBinding.instance.addObserver(this);
+    subscribe();
   }
 
   @override
   void dispose() {
-    subscription.unsubscribe();
+    WidgetsBinding.instance.removeObserver(this);
+    unSubscribe();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch(state) {
+      case AppLifecycleState.resumed:
+        subscribe();
+        break;
+      case AppLifecycleState.paused:
+        unSubscribe();
+        break;
+    }
+  }
+
+  void subscribe() {
+    device.subscribe();
+    subscription = device.subscription;
+    if(!isSubscribed) {
+      subscription.subscribe();
+      isSubscribed = true;
+    }
+  }
+
+  void unSubscribe() {
+    if(isSubscribed) {
+      subscription.unsubscribe();
+      isSubscribed = false;
+    }
   }
 
   @override
