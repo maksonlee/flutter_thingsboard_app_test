@@ -32,6 +32,7 @@ dependencies:
   thingsboard_client:
   flutter_secure_storage:
   provider:
+  syncfusion_flutter_charts:
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -11,6 +11,7 @@ class DeviceModel with ChangeNotifier {
   int index = -1;
   String? temperature;
   late TelemetrySubscriber subscription;
+  var datas = <ChartData>[];
 
   Future<bool> init() async {
     var storage = TbSecureStorage();
@@ -37,6 +38,7 @@ class DeviceModel with ChangeNotifier {
   }
 
   void subscribe() async {
+    datas.clear();
     var entityFilter = EntityNameFilter(
         entityType: EntityType.DEVICE, entityNameFilter: devices[index].name);
     var deviceTelemetry = <EntityKey>[
@@ -59,14 +61,41 @@ class DeviceModel with ChangeNotifier {
     var telemetryService = tbClient.getTelemetryService();
     subscription = TelemetrySubscriber(telemetryService, [cmd]);
     subscription.entityDataStream.listen((entityDataUpdate) {
+      var data = entityDataUpdate.data;
       var update = entityDataUpdate.update;
+      if (data != null) {
+        for (var temp in data.data[0].timeseries["temperature"]!.reversed) {
+          addData(DateTime.fromMillisecondsSinceEpoch(temp.ts),
+              double.parse(temp.value ?? "0"));
+        }
+        notifyListeners();
+      }
+
       if (update != null) {
         if (update[0].timeseries["temperature"] != null) {
           temperature = update[0].timeseries["temperature"]![0].value;
+          addData(
+              DateTime.fromMillisecondsSinceEpoch(
+                  update[0].timeseries["temperature"]![0].ts),
+              double.parse(temperature!));
           print(temperature);
           notifyListeners();
         }
       }
     });
   }
+
+  void addData(DateTime x, double y) {
+    datas.add(ChartData(x, y));
+    if (datas[0].x.add(const Duration(minutes: 1)).isBefore(DateTime.now())) {
+      datas.removeAt(0);
+    }
+  }
+}
+
+class ChartData {
+  DateTime x;
+  double y;
+
+  ChartData(this.x, this.y);
 }
