@@ -23,6 +23,7 @@ class _DeviceDetailState extends State<DeviceDetail>
     super.initState();
     device = Provider.of<DeviceModel>(context, listen: false);
     WidgetsBinding.instance.addObserver(this);
+    device.temperature = "";
     subscribe();
   }
 
@@ -72,27 +73,31 @@ class _DeviceDetailState extends State<DeviceDetail>
         children: [
           Expanded(
             flex: 1,
-            child: Center(
-              child: Text(
-                device.temperature ?? "",
-                style: const TextStyle(
-                  fontSize: 60,
-                  color: Colors.deepOrange,
+            child: Card(
+              child: Center(
+                child: Text(
+                  device.temperature?? "",
+                  style: const TextStyle(
+                    fontSize: 60,
+                    color: Colors.deepOrange,
+                  ),
                 ),
               ),
             ),
           ),
           Expanded(
             flex: 1,
-            child: Center(
-              child: SfCartesianChart(
-                  primaryXAxis: DateTimeAxis(),
-                  series: <ChartSeries>[
-                    LineSeries<ChartData, DateTime>(
-                        dataSource: device.datas,
-                        xValueMapper: (ChartData data, _) => data.x,
-                        yValueMapper: (ChartData data, _) => data.y)
-                  ]),
+            child: Card(
+              child: Center(
+                child: SfCartesianChart(
+                    primaryXAxis: DateTimeAxis(),
+                    series: <ChartSeries>[
+                      LineSeries<ChartData, DateTime>(
+                          dataSource: device.datas,
+                          xValueMapper: (ChartData data, _) => data.x,
+                          yValueMapper: (ChartData data, _) => data.y)
+                    ]),
+              ),
             ),
           ),
         ],
