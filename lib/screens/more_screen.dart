@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/device_model.dart';
+import '../models/thingsboard_provider.dart';
 import 'login_screen.dart';
 
 class MoreScreen extends StatelessWidget {
@@ -21,9 +21,9 @@ class MoreScreen extends StatelessWidget {
                     leading: const Icon(Icons.logout),
                     title: const Text("Log out"),
                     onTap: () {
-                      final device =
-                          Provider.of<DeviceModel>(context, listen: false);
-                      device.tbClient.logout();
+                      final provider =
+                          Provider.of<ThingsBoardProvider>(context, listen: false);
+                      provider.tbClient.logout();
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) {
                         return const LoginScreen();

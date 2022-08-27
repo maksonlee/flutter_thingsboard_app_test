@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:thingsboard_client/thingsboard_client.dart';
 
-import '../models/device_model.dart';
+import '../models/thingsboard_provider.dart';
 
 class DeviceDetailScreen extends StatefulWidget {
   const DeviceDetailScreen({Key? key}) : super(key: key);
@@ -14,16 +14,16 @@ class DeviceDetailScreen extends StatefulWidget {
 
 class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     with WidgetsBindingObserver {
-  late DeviceModel device;
+  late ThingsBoardProvider provider;
   late TelemetrySubscriber subscription;
   bool isSubscribed = false;
 
   @override
   void initState() {
     super.initState();
-    device = Provider.of<DeviceModel>(context, listen: false);
+    provider = Provider.of<ThingsBoardProvider>(context, listen: false);
     WidgetsBinding.instance.addObserver(this);
-    device.temperature = "";
+    provider.temperature = "";
     subscribe();
   }
 
@@ -47,8 +47,8 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   }
 
   void subscribe() {
-    device.subscribe();
-    subscription = device.subscription;
+    provider.subscribe();
+    subscription = provider.subscription;
     if (!isSubscribed) {
       subscription.subscribe();
       isSubscribed = true;
@@ -64,10 +64,10 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
 
   @override
   Widget build(BuildContext context) {
-    final device = Provider.of<DeviceModel>(context);
+    final provider = Provider.of<ThingsBoardProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(device.devices[device.index].name),
+        title: Text(provider.devices[provider.deviceIndex].name),
       ),
       body: Column(
         children: [
@@ -76,7 +76,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
             child: Card(
               child: Center(
                 child: Text(
-                  device.temperature?? "",
+                  provider.temperature?? "",
                   style: const TextStyle(
                     fontSize: 60,
                     color: Colors.deepOrange,
@@ -93,7 +93,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                     primaryXAxis: DateTimeAxis(),
                     series: <ChartSeries>[
                       LineSeries<ChartData, DateTime>(
-                          dataSource: device.datas,
+                          dataSource: provider.datas,
                           xValueMapper: (ChartData data, _) => data.x,
                           yValueMapper: (ChartData data, _) => data.y)
                     ]),

@@ -5,10 +5,10 @@ import '../constants/app_constants.dart';
 import '../utils/tb_secure_storage.dart';
 import 'device.dart';
 
-class DeviceModel with ChangeNotifier {
+class ThingsBoardProvider with ChangeNotifier {
   late final ThingsboardClient tbClient;
   var devices = <MyDevice>[];
-  int index = -1;
+  int deviceIndex = -1;
   String? temperature;
   late TelemetrySubscriber subscription;
   var datas = <ChartData>[];
@@ -43,7 +43,7 @@ class DeviceModel with ChangeNotifier {
   void subscribe() async {
     datas.clear();
     var entityFilter = EntityNameFilter(
-        entityType: EntityType.DEVICE, entityNameFilter: devices[index].name);
+        entityType: EntityType.DEVICE, entityNameFilter: devices[deviceIndex].name);
     var deviceTelemetry = <EntityKey>[
       EntityKey(type: EntityKeyType.TIME_SERIES, key: 'temperature'),
     ];

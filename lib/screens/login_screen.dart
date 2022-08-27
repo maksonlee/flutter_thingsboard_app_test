@@ -3,7 +3,7 @@ import 'package:thingsboard_app/screens/my_tab_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:thingsboard_client/thingsboard_client.dart';
 
-import '../models/device_model.dart';
+import '../models/thingsboard_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -95,8 +95,8 @@ class _LoginFormState extends State<LoginForm> {
       final email = emailController.text;
       final passwd = passwdController.text;
 
-      final device = Provider.of<DeviceModel>(context, listen: false);
-      var tbClient = device.tbClient;
+      final provider = Provider.of<ThingsBoardProvider>(context, listen: false);
+      var tbClient = provider.tbClient;
 
       try {
         await tbClient.login(LoginRequest(email, passwd));

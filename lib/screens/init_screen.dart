@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:thingsboard_app/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../models/device_model.dart';
+import '../models/thingsboard_provider.dart';
 import 'my_tab_controller.dart';
 
 class InitScreen extends StatefulWidget {
@@ -16,8 +16,8 @@ class _InitScreenState extends State<InitScreen> {
   @override
   void initState() {
     super.initState();
-    final device = Provider.of<DeviceModel>(context, listen: false);
-    device.init().then((isAuthenticated) {
+    final provider = Provider.of<ThingsBoardProvider>(context, listen: false);
+    provider.init().then((isAuthenticated) {
       if (isAuthenticated) {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) {
