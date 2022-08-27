@@ -5,14 +5,14 @@ import 'package:thingsboard_client/thingsboard_client.dart';
 
 import '../models/device_model.dart';
 
-class DeviceDetail extends StatefulWidget {
-  const DeviceDetail({Key? key}) : super(key: key);
+class DeviceDetailScreen extends StatefulWidget {
+  const DeviceDetailScreen({Key? key}) : super(key: key);
 
   @override
-  State<DeviceDetail> createState() => _DeviceDetailState();
+  State<DeviceDetailScreen> createState() => _DeviceDetailScreenState();
 }
 
-class _DeviceDetailState extends State<DeviceDetail>
+class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     with WidgetsBindingObserver {
   late DeviceModel device;
   late TelemetrySubscriber subscription;

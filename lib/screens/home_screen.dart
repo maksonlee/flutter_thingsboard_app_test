@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thingsboard_app/screens/device_detail.dart';
+import 'package:thingsboard_app/screens/device_detail_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../models/device_model.dart';
@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () {
                   device.index = index;
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const DeviceDetail();
+                    return const DeviceDetailScreen();
                   }));
                 },
               ),
