@@ -22,12 +22,15 @@ class DeviceModel with ChangeNotifier {
   }
 
   void getDevices() async {
+    devices.clear();
     var pageLink = PageLink(10);
     PageData<DeviceInfo> deviceInfos;
 
     do {
-      deviceInfos =
-          await tbClient.getDeviceService().getTenantDeviceInfos(pageLink);
+      deviceInfos = tbClient.getAuthUser()!.isTenantAdmin()
+          ? await tbClient.getDeviceService().getTenantDeviceInfos(pageLink)
+          : await tbClient.getDeviceService().getCustomerDeviceInfos(
+              tbClient.getAuthUser()!.customerId, pageLink);
       for (var device in deviceInfos.data) {
         devices.add(MyDevice(device.name, device.id?.id));
       }
