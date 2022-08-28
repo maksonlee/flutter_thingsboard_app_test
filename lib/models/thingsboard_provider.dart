@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thingsboard_app/models/room.dart';
 import 'package:thingsboard_client/thingsboard_client.dart';
 
 import '../constants/app_constants.dart';
@@ -8,6 +9,7 @@ import 'device.dart';
 class ThingsBoardProvider with ChangeNotifier {
   late final ThingsboardClient tbClient;
   var devices = <MyDevice>[];
+  var rooms = <MyRoom>[];
   int deviceIndex = -1;
   String? temperature;
   late TelemetrySubscriber subscription;
@@ -36,6 +38,25 @@ class ThingsBoardProvider with ChangeNotifier {
       }
       pageLink = pageLink.nextPageLink();
     } while (deviceInfos.hasNext);
+
+    notifyListeners();
+  }
+
+  void getRooms() async {
+    rooms.clear();
+    var pageLink = PageLink(10);
+    PageData<AssetInfo> roomInfos;
+
+    do {
+      roomInfos = tbClient.getAuthUser()!.isTenantAdmin()
+          ? await tbClient.getAssetService().getTenantAssetInfos(pageLink)
+          : await tbClient.getAssetService().getCustomerAssetInfos(
+          tbClient.getAuthUser()!.customerId, pageLink);
+      for (var room in roomInfos.data) {
+        rooms.add(MyRoom(room.name, room.id?.id));
+      }
+      pageLink = pageLink.nextPageLink();
+    } while (roomInfos.hasNext);
 
     notifyListeners();
   }
