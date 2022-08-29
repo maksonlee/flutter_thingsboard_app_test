@@ -20,20 +20,62 @@ class _RoomScreenState extends State<RoomScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ThingsBoardProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Rooms"),
       ),
-      body: ListView.builder(
-        itemCount: provider.rooms.length,
-        itemBuilder: ((context, index) => Card(
-          child: ListTile(
-            title: Text(provider.rooms[index].name),
-            subtitle: Text(provider.rooms[index].id ?? ""),
-            onTap: () {},
-          ),
-        )),
+      body: getContent(),
+    );
+  }
+
+  Widget getContent() {
+    final provider = Provider.of<ThingsBoardProvider>(context);
+    return SizedBox(
+      height: double.infinity,
+      child: Wrap(
+        alignment: WrapAlignment.start,
+        spacing: 8.0,
+        runSpacing: 4.0,
+        children: provider.rooms
+            .map((room) => Card(
+                    child: SizedBox(
+                  width: 160,
+                  height: 160,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Center(
+                          child: Text(room.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              )),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                                flex: 1,
+                                child: Center(
+                                  child: Image.asset(
+                                      "assets/images/temperature-sensor-icon.png"),
+                                )),
+                            const Expanded(
+                                flex: 2,
+                                child: Center(
+                                    child: Text("12.34",
+                                        style: TextStyle(fontSize: 25)))),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )))
+            .toList(),
       ),
     );
   }
