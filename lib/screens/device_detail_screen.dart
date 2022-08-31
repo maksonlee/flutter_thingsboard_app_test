@@ -23,7 +23,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     super.initState();
     provider = Provider.of<ThingsBoardProvider>(context, listen: false);
     WidgetsBinding.instance.addObserver(this);
-    provider.temperature = "";
+    provider.devices[provider.deviceIndex].temperature = "";
     subscribe();
   }
 
@@ -76,7 +76,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
             child: Card(
               child: Center(
                 child: Text(
-                  provider.temperature?? "",
+                  provider.devices[provider.deviceIndex].temperature?? "",
                   style: const TextStyle(
                     fontSize: 60,
                     color: Colors.deepOrange,

@@ -11,7 +11,6 @@ class ThingsBoardProvider with ChangeNotifier {
   var devices = <MyDevice>[];
   var rooms = <MyRoom>[];
   int deviceIndex = -1;
-  String? temperature;
   late TelemetrySubscriber subscription;
   var datas = <ChartData>[];
 
@@ -34,7 +33,7 @@ class ThingsBoardProvider with ChangeNotifier {
           : await tbClient.getDeviceService().getCustomerDeviceInfos(
               tbClient.getAuthUser()!.customerId, pageLink);
       for (var device in deviceInfos.data) {
-        devices.add(MyDevice(device.name, device.id?.id));
+        devices.add(MyDevice(device.name, device.id?.id, null));
       }
       pageLink = pageLink.nextPageLink();
     } while (deviceInfos.hasNext);
@@ -97,12 +96,12 @@ class ThingsBoardProvider with ChangeNotifier {
 
       if (update != null) {
         if (update[0].timeseries["temperature"] != null) {
-          temperature = update[0].timeseries["temperature"]![0].value;
+          devices[deviceIndex].temperature = update[0].timeseries["temperature"]![0].value;
           addData(
               DateTime.fromMillisecondsSinceEpoch(
                   update[0].timeseries["temperature"]![0].ts),
-              double.parse(temperature!));
-          print(temperature);
+              double.parse(devices[deviceIndex].temperature!));
+          print(devices[deviceIndex].temperature);
           notifyListeners();
         }
       }
