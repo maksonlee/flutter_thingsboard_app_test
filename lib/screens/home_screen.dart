@@ -30,10 +30,11 @@ class _HomeScreenState extends State<HomeScreen> {
         itemCount: provider.devices.length,
         itemBuilder: ((context, index) => Card(
               child: ListTile(
-                title: Text(provider.devices[index].name),
-                subtitle: Text(provider.devices[index].id ?? ""),
+                title: Text(provider.devices.values.toList()[index].name),
+                subtitle: Text(provider.devices.values.toList()[index].id!),
                 onTap: () {
-                  provider.deviceIndex = index;
+                  provider.deviceId =
+                      provider.devices.values.toList()[index].id!;
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return const DeviceDetailScreen();
                   }));

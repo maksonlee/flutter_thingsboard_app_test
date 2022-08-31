@@ -8,11 +8,10 @@ import 'device.dart';
 
 class ThingsBoardProvider with ChangeNotifier {
   late final ThingsboardClient tbClient;
-  var devices = <MyDevice>[];
+  var devices = <String, MyDevice>{};
   var rooms = <MyRoom>[];
-  int deviceIndex = -1;
+  String deviceId = "";
   late TelemetrySubscriber subscription;
-  var datas = <ChartData>[];
 
   Future<bool> init() async {
     var storage = TbSecureStorage();
@@ -33,7 +32,7 @@ class ThingsBoardProvider with ChangeNotifier {
           : await tbClient.getDeviceService().getCustomerDeviceInfos(
               tbClient.getAuthUser()!.customerId, pageLink);
       for (var device in deviceInfos.data) {
-        devices.add(MyDevice(device.name, device.id?.id, null));
+        devices[device.id!.id!] = MyDevice(device.name, device.id!.id!, null);
       }
       pageLink = pageLink.nextPageLink();
     } while (deviceInfos.hasNext);
@@ -50,7 +49,7 @@ class ThingsBoardProvider with ChangeNotifier {
       roomInfos = tbClient.getAuthUser()!.isTenantAdmin()
           ? await tbClient.getAssetService().getTenantAssetInfos(pageLink)
           : await tbClient.getAssetService().getCustomerAssetInfos(
-          tbClient.getAuthUser()!.customerId, pageLink);
+              tbClient.getAuthUser()!.customerId, pageLink);
       for (var room in roomInfos.data) {
         rooms.add(MyRoom(room.name, room.id?.id));
       }
@@ -61,9 +60,16 @@ class ThingsBoardProvider with ChangeNotifier {
   }
 
   void subscribe() async {
-    datas.clear();
-    var entityFilter = EntityNameFilter(
-        entityType: EntityType.DEVICE, entityNameFilter: devices[deviceIndex].name);
+    if (deviceId.isEmpty) {
+      for (var device in devices.values.toList()) {
+        device.chartData.clear();
+      }
+    } else {
+      devices[deviceId]!.chartData.clear();
+    }
+
+    var entityFilter =
+        EntityListFilter(entityType: EntityType.DEVICE, entityList: [deviceId]);
     var deviceTelemetry = <EntityKey>[
       EntityKey(type: EntityKeyType.TIME_SERIES, key: 'temperature'),
     ];
@@ -87,8 +93,9 @@ class ThingsBoardProvider with ChangeNotifier {
       var data = entityDataUpdate.data;
       var update = entityDataUpdate.update;
       if (data != null) {
+        var id = data.data[0].entityId.id;
         for (var temp in data.data[0].timeseries["temperature"]!.reversed) {
-          addData(DateTime.fromMillisecondsSinceEpoch(temp.ts),
+          addData(id!, DateTime.fromMillisecondsSinceEpoch(temp.ts),
               double.parse(temp.value ?? "0"));
         }
         notifyListeners();
@@ -96,22 +103,29 @@ class ThingsBoardProvider with ChangeNotifier {
 
       if (update != null) {
         if (update[0].timeseries["temperature"] != null) {
-          devices[deviceIndex].temperature = update[0].timeseries["temperature"]![0].value;
+          var id = update[0].entityId.id;
+          devices[id]!.temperature =
+              update[0].timeseries["temperature"]![0].value;
           addData(
+              id!,
               DateTime.fromMillisecondsSinceEpoch(
                   update[0].timeseries["temperature"]![0].ts),
-              double.parse(devices[deviceIndex].temperature!));
-          print(devices[deviceIndex].temperature);
+              double.parse(devices[id]!.temperature!));
+          print(devices[id]!.temperature);
           notifyListeners();
         }
       }
     });
   }
 
-  void addData(DateTime x, double y) {
-    datas.add(ChartData(x, y));
-    if (datas[0].x.add(const Duration(minutes: 1)).isBefore(DateTime.now())) {
-      datas.removeAt(0);
+  void addData(String devicdId, DateTime x, double y) {
+    devices[devicdId]!.chartData.add(ChartData(x, y));
+    if (devices[devicdId]!
+        .chartData[0]
+        .x
+        .add(const Duration(minutes: 1))
+        .isBefore(DateTime.now())) {
+      devices[devicdId]!.chartData.removeAt(0);
     }
   }
 }

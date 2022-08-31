@@ -23,7 +23,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     super.initState();
     provider = Provider.of<ThingsBoardProvider>(context, listen: false);
     WidgetsBinding.instance.addObserver(this);
-    provider.devices[provider.deviceIndex].temperature = "";
+    provider.devices[provider.deviceId]!.temperature = "";
     subscribe();
   }
 
@@ -67,7 +67,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     final provider = Provider.of<ThingsBoardProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(provider.devices[provider.deviceIndex].name),
+        title: Text(provider.devices[provider.deviceId]!.name),
       ),
       body: Column(
         children: [
@@ -76,7 +76,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
             child: Card(
               child: Center(
                 child: Text(
-                  provider.devices[provider.deviceIndex].temperature?? "",
+                  provider.devices[provider.deviceId]!.temperature!,
                   style: const TextStyle(
                     fontSize: 60,
                     color: Colors.deepOrange,
@@ -93,7 +93,8 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                     primaryXAxis: DateTimeAxis(),
                     series: <ChartSeries>[
                       LineSeries<ChartData, DateTime>(
-                          dataSource: provider.datas,
+                          dataSource:
+                              provider.devices[provider.deviceId]!.chartData!,
                           xValueMapper: (ChartData data, _) => data.x,
                           yValueMapper: (ChartData data, _) => data.y)
                     ]),
