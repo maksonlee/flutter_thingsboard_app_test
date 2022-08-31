@@ -21,7 +21,7 @@ class ThingsBoardProvider with ChangeNotifier {
     return tbClient.isAuthenticated();
   }
 
-  void getDevices() async {
+  Future<void> getDevices() async {
     devices.clear();
     var pageLink = PageLink(10);
     PageData<DeviceInfo> deviceInfos;
@@ -32,7 +32,7 @@ class ThingsBoardProvider with ChangeNotifier {
           : await tbClient.getDeviceService().getCustomerDeviceInfos(
               tbClient.getAuthUser()!.customerId, pageLink);
       for (var device in deviceInfos.data) {
-        devices[device.id!.id!] = MyDevice(device.name, device.id!.id!, null);
+        devices[device.id!.id!] = MyDevice(device.name, device.id!.id!, "-");
       }
       pageLink = pageLink.nextPageLink();
     } while (deviceInfos.hasNext);
@@ -40,7 +40,7 @@ class ThingsBoardProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void getRooms() async {
+  Future<void> getRooms() async {
     rooms.clear();
     var pageLink = PageLink(10);
     PageData<AssetInfo> roomInfos;
@@ -51,7 +51,15 @@ class ThingsBoardProvider with ChangeNotifier {
           : await tbClient.getAssetService().getCustomerAssetInfos(
               tbClient.getAuthUser()!.customerId, pageLink);
       for (var room in roomInfos.data) {
-        rooms.add(MyRoom(room.name, room.id?.id));
+        var r = await tbClient.getAssetService().getAsset(room.id!.id!);
+        var t = await tbClient
+            .getEntityRelationService()
+            .findByFrom(r!.id!, relationType: "Contains");
+        String? id;
+        if (t.isNotEmpty) {
+          id = t[0].to.id!;
+        }
+        rooms.add(MyRoom(room.name, room.id?.id, id));
       }
       pageLink = pageLink.nextPageLink();
     } while (roomInfos.hasNext);
@@ -60,16 +68,19 @@ class ThingsBoardProvider with ChangeNotifier {
   }
 
   void subscribe() async {
-    if (deviceId.isEmpty) {
+    var entityList = <String>[];
+    if (deviceId == "") {
       for (var device in devices.values.toList()) {
         device.chartData.clear();
+        entityList.add(device.id!);
       }
     } else {
       devices[deviceId]!.chartData.clear();
+      entityList.add(deviceId);
     }
 
     var entityFilter =
-        EntityListFilter(entityType: EntityType.DEVICE, entityList: [deviceId]);
+        EntityListFilter(entityType: EntityType.DEVICE, entityList: entityList);
     var deviceTelemetry = <EntityKey>[
       EntityKey(type: EntityKeyType.TIME_SERIES, key: 'temperature'),
     ];
@@ -104,8 +115,9 @@ class ThingsBoardProvider with ChangeNotifier {
       if (update != null) {
         if (update[0].timeseries["temperature"] != null) {
           var id = update[0].entityId.id;
-          devices[id]!.temperature =
-              update[0].timeseries["temperature"]![0].value;
+          devices[id]!.temperature = update[0].timeseries["temperature"] == null
+              ? "-"
+              : update[0].timeseries["temperature"]![0].value!;
           addData(
               id!,
               DateTime.fromMillisecondsSinceEpoch(

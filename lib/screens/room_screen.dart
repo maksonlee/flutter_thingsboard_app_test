@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:thingsboard_client/thingsboard_client.dart';
 
 import '../models/thingsboard_provider.dart';
 
@@ -10,12 +11,59 @@ class RoomScreen extends StatefulWidget {
   State<RoomScreen> createState() => _RoomScreenState();
 }
 
-class _RoomScreenState extends State<RoomScreen> {
+class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
+  late ThingsBoardProvider provider;
+  late TelemetrySubscriber subscription;
+  bool isSubscribed = false;
+
   @override
   void initState() {
     super.initState();
-    final provider = Provider.of<ThingsBoardProvider>(context, listen: false);
-    provider.getRooms();
+    provider = Provider.of<ThingsBoardProvider>(context, listen: false);
+    WidgetsBinding.instance.addObserver(this);
+    init();
+  }
+
+  void init() async {
+    await provider.getDevices();
+    await provider.getRooms();
+    subscribe();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    unSubscribe();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        subscribe();
+        break;
+      case AppLifecycleState.paused:
+        unSubscribe();
+        break;
+    }
+  }
+
+  void subscribe() {
+    provider.deviceId = "";
+    provider.subscribe();
+    subscription = provider.subscription;
+    if (!isSubscribed) {
+      subscription.subscribe();
+      isSubscribed = true;
+    }
+  }
+
+  void unSubscribe() {
+    if (isSubscribed) {
+      subscription.unsubscribe();
+      isSubscribed = false;
+    }
   }
 
   @override
@@ -64,11 +112,15 @@ class _RoomScreenState extends State<RoomScreen> {
                                   child: Image.asset(
                                       "assets/images/temperature-sensor-icon.png"),
                                 )),
-                            const Expanded(
+                            Expanded(
                                 flex: 2,
                                 child: Center(
-                                    child: Text("12.34",
-                                        style: TextStyle(fontSize: 25)))),
+                                    child: Text(
+                                        provider.devices[room.deviceId] != null
+                                            ? provider.devices[room.deviceId]!
+                                                .temperature
+                                            : "-",
+                                        style: const TextStyle(fontSize: 20)))),
                           ],
                         ),
                       ),

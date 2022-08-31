@@ -23,7 +23,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     super.initState();
     provider = Provider.of<ThingsBoardProvider>(context, listen: false);
     WidgetsBinding.instance.addObserver(this);
-    provider.devices[provider.deviceId]!.temperature = "";
+    provider.devices[provider.deviceId]!.temperature = "-";
     subscribe();
   }
 
