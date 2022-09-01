@@ -106,8 +106,7 @@ class ThingsBoardProvider with ChangeNotifier {
       if (data != null) {
         var id = data.data[0].entityId.id;
         for (var temp in data.data[0].timeseries["temperature"]!.reversed) {
-          addData(id!, DateTime.fromMillisecondsSinceEpoch(temp.ts),
-              double.parse(temp.value ?? "0"));
+          addData(id!, temp.ts, double.parse(temp.value ?? "0"));
         }
         notifyListeners();
       }
@@ -118,10 +117,7 @@ class ThingsBoardProvider with ChangeNotifier {
           devices[id]!.temperature = update[0].timeseries["temperature"] == null
               ? "-"
               : update[0].timeseries["temperature"]![0].value!;
-          addData(
-              id!,
-              DateTime.fromMillisecondsSinceEpoch(
-                  update[0].timeseries["temperature"]![0].ts),
+          addData(id!, update[0].timeseries["temperature"]![0].ts,
               double.parse(devices[id]!.temperature!));
           print(devices[id]!.temperature);
           notifyListeners();
@@ -130,8 +126,9 @@ class ThingsBoardProvider with ChangeNotifier {
     });
   }
 
-  void addData(String deviceId, DateTime x, double y) {
-    devices[deviceId]!.chartData.add(ChartData(x, y));
+  void addData(String deviceId, int x, double y) {
+    var t = DateTime.fromMillisecondsSinceEpoch(x);
+    devices[deviceId]!.chartData.add(ChartData(t, y));
     if (devices[deviceId]!
         .chartData[0]
         .x
