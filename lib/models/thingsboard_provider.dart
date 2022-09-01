@@ -118,8 +118,7 @@ class ThingsBoardProvider with ChangeNotifier {
               ? "-"
               : update[0].timeseries["temperature"]![0].value!;
           addData(id!, update[0].timeseries["temperature"]![0].ts,
-              double.parse(devices[id]!.temperature!));
-          print(devices[id]!.temperature);
+              double.parse(devices[id]!.temperature));
         }
         if (update[0].timeseries["humidity"] != null) {
           var id = update[0].entityId.id;
