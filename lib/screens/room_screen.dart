@@ -110,7 +110,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                 flex: 1,
                                 child: Center(
                                   child: Image.asset(
-                                      "assets/images/temperature-sensor-icon.png"),
+                                      "assets/images/thermometer.png"),
                                 )),
                             Expanded(
                                 flex: 2,
@@ -119,6 +119,29 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                         provider.devices[room.deviceId] != null
                                             ? provider.devices[room.deviceId]!
                                                 .temperature
+                                            : "-",
+                                        style: const TextStyle(fontSize: 20)))),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                                flex: 1,
+                                child: Center(
+                                  child:
+                                      Image.asset("assets/images/humidity.png"),
+                                )),
+                            Expanded(
+                                flex: 2,
+                                child: Center(
+                                    child: Text(
+                                        provider.devices[room.deviceId] != null
+                                            ? provider.devices[room.deviceId]!
+                                                .humidity
                                             : "-",
                                         style: const TextStyle(fontSize: 20)))),
                           ],

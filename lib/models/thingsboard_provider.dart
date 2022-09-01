@@ -32,7 +32,7 @@ class ThingsBoardProvider with ChangeNotifier {
           : await tbClient.getDeviceService().getCustomerDeviceInfos(
               tbClient.getAuthUser()!.customerId, pageLink);
       for (var device in deviceInfos.data) {
-        devices[device.id!.id!] = MyDevice(device.name, device.id!.id!, "-");
+        devices[device.id!.id!] = MyDevice(device.name, device.id!.id!, "-", "-");
       }
       pageLink = pageLink.nextPageLink();
     } while (deviceInfos.hasNext);
@@ -83,6 +83,7 @@ class ThingsBoardProvider with ChangeNotifier {
         EntityListFilter(entityType: EntityType.DEVICE, entityList: entityList);
     var deviceTelemetry = <EntityKey>[
       EntityKey(type: EntityKeyType.TIME_SERIES, key: 'temperature'),
+      EntityKey(type: EntityKeyType.TIME_SERIES, key: 'humidity'),
     ];
     var devicesQuery = EntityDataQuery(
         entityFilter: entityFilter,
@@ -94,7 +95,7 @@ class ThingsBoardProvider with ChangeNotifier {
     var currentTime = DateTime.now().millisecondsSinceEpoch;
     var timeWindow = const Duration(hours: 1).inMilliseconds;
     var tsCmd = TimeSeriesCmd(
-        keys: ['temperature'],
+        keys: ['temperature', 'humidity'],
         startTs: currentTime - timeWindow,
         timeWindow: timeWindow);
     var cmd = EntityDataCmd(query: devicesQuery, tsCmd: tsCmd);
@@ -108,7 +109,6 @@ class ThingsBoardProvider with ChangeNotifier {
         for (var temp in data.data[0].timeseries["temperature"]!.reversed) {
           addData(id!, temp.ts, double.parse(temp.value ?? "0"));
         }
-        notifyListeners();
       }
 
       if (update != null) {
@@ -120,9 +120,15 @@ class ThingsBoardProvider with ChangeNotifier {
           addData(id!, update[0].timeseries["temperature"]![0].ts,
               double.parse(devices[id]!.temperature!));
           print(devices[id]!.temperature);
-          notifyListeners();
+        }
+        if (update[0].timeseries["humidity"] != null) {
+          var id = update[0].entityId.id;
+          devices[id]!.humidity = update[0].timeseries["humidity"] == null
+              ? "-"
+              : update[0].timeseries["humidity"]![0].value!;
         }
       }
+      notifyListeners();
     });
   }
 
