@@ -130,14 +130,14 @@ class ThingsBoardProvider with ChangeNotifier {
     });
   }
 
-  void addData(String devicdId, DateTime x, double y) {
-    devices[devicdId]!.chartData.add(ChartData(x, y));
-    if (devices[devicdId]!
+  void addData(String deviceId, DateTime x, double y) {
+    devices[deviceId]!.chartData.add(ChartData(x, y));
+    if (devices[deviceId]!
         .chartData[0]
         .x
         .add(const Duration(minutes: 1))
         .isBefore(DateTime.now())) {
-      devices[devicdId]!.chartData.removeAt(0);
+      devices[deviceId]!.chartData.removeAt(0);
     }
   }
 }
