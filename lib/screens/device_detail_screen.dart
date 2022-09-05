@@ -36,13 +36,10 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        subscribe();
-        break;
-      case AppLifecycleState.paused:
-        unSubscribe();
-        break;
+    if (state == AppLifecycleState.resumed) {
+      subscribe();
+    } else {
+      unSubscribe();
     }
   }
 

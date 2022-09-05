@@ -39,13 +39,10 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        subscribe();
-        break;
-      case AppLifecycleState.paused:
-        unSubscribe();
-        break;
+    if (state == AppLifecycleState.resumed) {
+      subscribe();
+    } else {
+      unSubscribe();
     }
   }
 
