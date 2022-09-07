@@ -30,7 +30,7 @@ class ThingsBoardProvider with ChangeNotifier {
       deviceInfos = tbClient.getAuthUser()!.isTenantAdmin()
           ? await tbClient.getDeviceService().getTenantDeviceInfos(pageLink)
           : await tbClient.getDeviceService().getCustomerDeviceInfos(
-              tbClient.getAuthUser()!.customerId, pageLink);
+              tbClient.getAuthUser()!.customerId!, pageLink);
       for (var device in deviceInfos.data) {
         devices[device.id!.id!] = MyDevice(device.name, device.id!.id!, "-", "-");
       }
@@ -49,7 +49,7 @@ class ThingsBoardProvider with ChangeNotifier {
       roomInfos = tbClient.getAuthUser()!.isTenantAdmin()
           ? await tbClient.getAssetService().getTenantAssetInfos(pageLink)
           : await tbClient.getAssetService().getCustomerAssetInfos(
-              tbClient.getAuthUser()!.customerId, pageLink);
+              tbClient.getAuthUser()!.customerId!, pageLink);
       for (var room in roomInfos.data) {
         var r = await tbClient.getAssetService().getAsset(room.id!.id!);
         var t = await tbClient
