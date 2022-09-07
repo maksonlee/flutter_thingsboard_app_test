@@ -15,7 +15,7 @@ class DeviceDetailScreen extends StatefulWidget {
 class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     with WidgetsBindingObserver {
   late ThingsBoardProvider provider;
-  late TelemetrySubscriber subscription;
+  late TelemetrySubscriber subscriber;
   bool isSubscribed = false;
 
   @override
@@ -44,17 +44,17 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   }
 
   void subscribe() {
-    provider.subscribe();
-    subscription = provider.subscription;
+    provider.createSubscriber();
+    subscriber = provider.subscriber;
     if (!isSubscribed) {
-      subscription.subscribe();
+      subscriber.subscribe();
       isSubscribed = true;
     }
   }
 
   void unSubscribe() {
     if (isSubscribed) {
-      subscription.unsubscribe();
+      subscriber.unsubscribe();
       isSubscribed = false;
     }
   }

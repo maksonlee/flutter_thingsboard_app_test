@@ -13,7 +13,7 @@ class RoomScreen extends StatefulWidget {
 
 class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
   late ThingsBoardProvider provider;
-  late TelemetrySubscriber subscription;
+  late TelemetrySubscriber subscriber;
   bool isSubscribed = false;
 
   @override
@@ -48,17 +48,17 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
 
   void subscribe() {
     provider.deviceId = "";
-    provider.subscribe();
-    subscription = provider.subscription;
+    provider.createSubscriber();
+    subscriber = provider.subscriber;
     if (!isSubscribed) {
-      subscription.subscribe();
+      subscriber.subscribe();
       isSubscribed = true;
     }
   }
 
   void unSubscribe() {
     if (isSubscribed) {
-      subscription.unsubscribe();
+      subscriber.unsubscribe();
       isSubscribed = false;
     }
   }

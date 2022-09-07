@@ -11,7 +11,7 @@ class ThingsBoardProvider with ChangeNotifier {
   var devices = <String, MyDevice>{};
   var rooms = <MyRoom>[];
   String deviceId = "";
-  late TelemetrySubscriber subscription;
+  late TelemetrySubscriber subscriber;
 
   Future<bool> init() async {
     var storage = TbSecureStorage();
@@ -67,7 +67,7 @@ class ThingsBoardProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void subscribe() async {
+  void createSubscriber() async {
     var entityList = <String>[];
     if (deviceId == "") {
       for (var device in devices.values.toList()) {
@@ -100,8 +100,8 @@ class ThingsBoardProvider with ChangeNotifier {
         timeWindow: timeWindow);
     var cmd = EntityDataCmd(query: devicesQuery, tsCmd: tsCmd);
     var telemetryService = tbClient.getTelemetryService();
-    subscription = TelemetrySubscriber(telemetryService, [cmd]);
-    subscription.entityDataStream.listen((entityDataUpdate) {
+    subscriber = TelemetrySubscriber(telemetryService, [cmd]);
+    subscriber.entityDataStream.listen((entityDataUpdate) {
       var data = entityDataUpdate.data;
       var update = entityDataUpdate.update;
       if (data != null) {
