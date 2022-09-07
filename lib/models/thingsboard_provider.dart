@@ -4,6 +4,7 @@ import 'package:thingsboard_client/thingsboard_client.dart';
 
 import '../constants/app_constants.dart';
 import '../utils/tb_secure_storage.dart';
+import 'chart_data.dart';
 import 'device.dart';
 
 class ThingsBoardProvider with ChangeNotifier {
@@ -32,7 +33,8 @@ class ThingsBoardProvider with ChangeNotifier {
           : await tbClient.getDeviceService().getCustomerDeviceInfos(
               tbClient.getAuthUser()!.customerId!, pageLink);
       for (var device in deviceInfos.data) {
-        devices[device.id!.id!] = MyDevice(device.name, device.id!.id!, "-", "-");
+        devices[device.id!.id!] =
+            MyDevice(device.name, device.id!.id!, "-", "-");
       }
       pageLink = pageLink.nextPageLink();
     } while (deviceInfos.hasNext);
@@ -142,11 +144,4 @@ class ThingsBoardProvider with ChangeNotifier {
       devices[deviceId]!.chartData.removeAt(0);
     }
   }
-}
-
-class ChartData {
-  DateTime x;
-  double y;
-
-  ChartData(this.x, this.y);
 }

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:thingsboard_client/thingsboard_client.dart';
 
+import '../models/chart_data.dart';
 import '../models/thingsboard_provider.dart';
 
 class DeviceDetailScreen extends StatefulWidget {

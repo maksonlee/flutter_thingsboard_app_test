@@ -1,4 +1,4 @@
-import 'package:thingsboard_app/models/thingsboard_provider.dart';
+import 'chart_data.dart';
 
 class MyDevice {
   String name;
