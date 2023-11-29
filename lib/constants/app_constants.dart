@@ -1,3 +1,3 @@
 abstract class ThingsboardAppConstants {
-  static final thingsBoardApiEndpoint = 'http://localhost:8080';
+  static final thingsBoardApiEndpoint = 'https://iot-aws.arimacomm.com.tw';
 }
