@@ -5,7 +5,7 @@ import '../models/thingsboard_provider.dart';
 import 'login_screen.dart';
 
 class MoreScreen extends StatelessWidget {
-  const MoreScreen({Key? key}) : super(key: key);
+  const MoreScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

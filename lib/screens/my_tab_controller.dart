@@ -4,7 +4,7 @@ import 'package:thingsboard_app/screens/home_screen.dart';
 import 'package:thingsboard_app/screens/more_screen.dart';
 
 class MyTabController extends StatelessWidget {
-  const MyTabController({Key? key}) : super(key: key);
+  const MyTabController({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -7,7 +7,7 @@ import '../models/chart_data.dart';
 import '../models/thingsboard_provider.dart';
 
 class DeviceDetailScreen extends StatefulWidget {
-  const DeviceDetailScreen({Key? key}) : super(key: key);
+  const DeviceDetailScreen({super.key});
 
   @override
   State<DeviceDetailScreen> createState() => _DeviceDetailScreenState();
@@ -74,7 +74,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
             child: Card(
               child: Center(
                 child: Text(
-                  provider.devices[provider.deviceId]!.temperature!,
+                  provider.devices[provider.deviceId]!.temperature,
                   style: const TextStyle(
                     fontSize: 60,
                     color: Colors.deepOrange,
@@ -88,14 +88,14 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
             child: Card(
               child: Center(
                 child: SfCartesianChart(
-                    primaryXAxis: DateTimeAxis(),
-                    series: <ChartSeries>[
+                    primaryXAxis: const DateTimeAxis(),
+                    series: List.from(<ChartSeries>[
                       LineSeries<ChartData, DateTime>(
                           dataSource:
-                              provider.devices[provider.deviceId]!.chartData!,
+                              provider.devices[provider.deviceId]!.chartData,
                           xValueMapper: (ChartData data, _) => data.x,
                           yValueMapper: (ChartData data, _) => data.y)
-                    ]),
+                    ])),
               ),
             ),
           ),

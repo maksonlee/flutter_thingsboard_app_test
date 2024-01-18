@@ -6,7 +6,7 @@ import '../models/thingsboard_provider.dart';
 import 'my_tab_controller.dart';
 
 class InitScreen extends StatefulWidget {
-  const InitScreen({Key? key}) : super(key: key);
+  const InitScreen({super.key});
 
   @override
   State<InitScreen> createState() => _InitScreenState();

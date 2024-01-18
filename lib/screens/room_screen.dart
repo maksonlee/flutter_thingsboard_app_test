@@ -5,7 +5,7 @@ import 'package:thingsboard_client/thingsboard_client.dart';
 import '../models/thingsboard_provider.dart';
 
 class RoomScreen extends StatefulWidget {
-  const RoomScreen({Key? key}) : super(key: key);
+  const RoomScreen({super.key});
 
   @override
   State<RoomScreen> createState() => _RoomScreenState();

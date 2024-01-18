@@ -6,7 +6,7 @@ import 'package:thingsboard_client/thingsboard_client.dart';
 import '../models/thingsboard_provider.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
 }
 
 class LoginForm extends StatefulWidget {
-  const LoginForm({Key? key}) : super(key: key);
+  const LoginForm({super.key});
 
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -82,8 +82,8 @@ class _LoginFormState extends State<LoginForm> {
             obscureText: true,
           ),
           ElevatedButton(
-            child: const Text("Login"),
             onPressed: _login,
+            child: const Text("Login"),
           ),
         ],
       ),
